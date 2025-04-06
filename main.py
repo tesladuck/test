@@ -9,8 +9,8 @@ app = FastAPI()
 SECRET_KEY = 'ZNlTGrenm1cCW1jt'  # Match with frontend
 
 class RequestData(BaseModel):
-    encryptedId: str
-    encryptedPassword: str
+    id: str
+    password: str
     action: str
 
 def decrypt(ciphertext):
@@ -24,11 +24,11 @@ def decrypt(ciphertext):
 
 @app.post("/run-task")
 async def run_task(data: RequestData):
-    decrypted_id = decrypt(data.encryptedId)
-    decrypted_password = decrypt(data.encryptedPassword)
+    decrypted_id = decrypt(data.id)
+    decrypted_password = decrypt(data.password)
 
     return {
-        "encryptedId": decrypted_id,
-        "encryptedPassword": decrypted_password,
+        "id": decrypted_id,
+        "password": decrypted_password,
         "action": data.action
     }
