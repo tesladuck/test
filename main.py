@@ -44,7 +44,7 @@ def check_retail_dashboard():
     headers = {
         "Host": "spandan.indianoil.co.in",
         "Origin": "https://spandan.indianoil.co.in",
-        "User-Agent": "Mozilla/5.0",  # Pretend it's a browser
+        "User-Agent": "PostmanRuntime/7.43.3",  # Pretend it's a browser
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9",
         "Accept-Language": "en-US,en;q=0.5",
         "Connection": "keep-alive"
