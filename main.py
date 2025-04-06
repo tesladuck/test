@@ -33,33 +33,29 @@ async def run_task(data: AutomationRequest):
     # Respond back
     print(f"Received request to perform '{data.action}' on {data.url} for ID '{data.id}'")
 
-    self.url = "https://spandan.indianoil.co.in/RetailNew/Login.jsp"
-    self.headers = {
-        "Cookie": (
-            "JSESSIONID=3occIY7-6lNTBCvH0zmfYPUbKs8AKQOdcDCcA13n.mudvappjbprd02; "
-            "TS01b06107=0120e46af1ccf522e2b4edc74063f22b6406be6578bb804c348dbea81b491348459dc0aed58abc8c1d9f303889a48dd014b77c6075; "
-            "BIGipServerJboss_52.53_8080=893489674.36895.0000; "
-            "TS015c0662=0120e46af1ccf522e2b4edc74063f22b6406be6578bb804c348dbea81b491348459dc0aed58abc8c1d9f303889a48dd014b77c6075"
-        )
-    }
-        
-    check_dashboard(self)
+    result = check_retail_dashboard()
+    print(f"Result: '{result}'")
+    return result
 
 # task_handler.py
-def check_dashboard(self):
+def check_retail_dashboard():
+    url = "https://spandan.indianoil.co.in/RetailNew/Login.jsp"
+
     try:
-        response = requests.get(self.url, headers=self.headers)
+        response = requests.get(url)
         content = response.text
 
         if "Retail Dashboard" in content:
-            session_cookies = response.cookies.get_dict()
-            relevant_cookies = {k: v for k, v in session_cookies.items() if k in [
-                "TS01b06107", "JSESSIONID", "BIGipServerJboss_52.53_8080", "TS015c0662"
-            ]}
+            cookies = response.cookies.get_dict()
+
+            # Extract only the required cookies
+            keys = ["TS01b06107", "JSESSIONID", "BIGipServerJboss_52.53_8080", "TS015c0662"]
+            cookie_str = "; ".join([f"{key}={cookies.get(key, '')}" for key in keys])
+
             return {
                 "status": "success",
                 "message": "Retail Dashboard loaded successfully.",
-                "cookies": relevant_cookies
+                "cookie_string": cookie_str
             }
         else:
             return {
