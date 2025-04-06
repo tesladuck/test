@@ -46,29 +46,29 @@ async def run_task(data: AutomationRequest):
     check_dashboard(self)
 
 # task_handler.py
-    def check_dashboard(self):
-        try:
-            response = requests.get(self.url, headers=self.headers)
-            content = response.text
+def check_dashboard(self):
+    try:
+        response = requests.get(self.url, headers=self.headers)
+        content = response.text
 
-            if "Retail Dashboard" in content:
-                session_cookies = response.cookies.get_dict()
-                relevant_cookies = {k: v for k, v in session_cookies.items() if k in [
-                    "TS01b06107", "JSESSIONID", "BIGipServerJboss_52.53_8080", "TS015c0662"
-                ]}
-                return {
-                    "status": "success",
-                    "message": "Retail Dashboard loaded successfully.",
-                    "cookies": relevant_cookies
-                }
-            else:
-                return {
-                    "status": "fail",
-                    "message": "Retail Dashboard not found in response."
-                }
-
-        except Exception as e:
+        if "Retail Dashboard" in content:
+            session_cookies = response.cookies.get_dict()
+            relevant_cookies = {k: v for k, v in session_cookies.items() if k in [
+                "TS01b06107", "JSESSIONID", "BIGipServerJboss_52.53_8080", "TS015c0662"
+            ]}
             return {
-                "status": "error",
-                "message": str(e)
+                "status": "success",
+                "message": "Retail Dashboard loaded successfully.",
+                "cookies": relevant_cookies
             }
+        else:
+            return {
+                "status": "fail",
+                "message": "Retail Dashboard not found in response."
+            }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e)
+        }
