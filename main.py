@@ -23,7 +23,6 @@ class AutomationRequest(BaseModel):
 async def run_task(data: AutomationRequest):
     # Debug output - Replace with actual automation logic
     print(f"Received Automation Request:")
-    print(f"URL: {data.url}")
     print(f"User ID: {data.id}")
     print(f"Password: {data.password}")
     print(f"Action: {data.action}")
