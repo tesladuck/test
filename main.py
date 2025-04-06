@@ -39,40 +39,26 @@ async def run_task(data: AutomationRequest):
 
 # task_handler.py
 def check_retail_dashboard():
+    proxies = {
+        "http": "http://204.236.137.68:80",
+        "https": "http://204.236.137.68:80",
+    }
+    
     url = "https://spandan.indianoil.co.in/RetailNew/Login.jsp"
-
+    
     headers = {
         "Host": "spandan.indianoil.co.in",
-        "Origin": "https://spandan.indianoil.co.in",
-        "User-Agent": "PostmanRuntime/7.43.3",  # Pretend it's a browser
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9",
-        "Accept-Language": "en-US,en;q=0.5",
-        "Connection": "keep-alive"
+        "Origin": "https://spandan.indianoil.co.in"
     }
-
-    try:
-        response = requests.get(url, headers=headers)
-        content = response.text
-
-        if "Retail Dashboard" in content:
-            cookies = response.cookies.get_dict()
-
-            keys = ["TS01b06107", "JSESSIONID", "BIGipServerJboss_52.53_8080", "TS015c0662"]
-            cookie_str = "; ".join([f"{key}={cookies.get(key, '')}" for key in keys])
-
-            return {
-                "status": "success",
-                "message": "Retail Dashboard loaded successfully.",
-                "cookie_string": cookie_str
-            }
-        else:
-            return {
-                "status": "fail",
-                "message": "Retail Dashboard not found in response."
-            }
-
-    except Exception as e:
-        return {
-            "status": "error",
-            "message": str(e)
-        }
+    
+    response = requests.get(url, headers=headers, proxies=proxies, timeout=15)
+    
+    if "Retail Dashboard" in response.text:
+        # Extract cookies in desired format
+        cookies = response.cookies.get_dict()
+        formatted_cookies = "; ".join([f"{k}={v}" for k, v in cookies.items()
+                                       if k in ["TS01b06107", "JSESSIONID", "BIGipServerJboss_52.53_8080", "TS015c0662"]])
+        print("✅ Site Accessed!")
+        print("Cookies:", formatted_cookies)
+    else:
+        print("❌ Retail Dashboard not found.")
