@@ -6,7 +6,7 @@ import hashlib
 
 app = FastAPI()
 
-SECRET_KEY = 'ZNlTGrenm1cCW1jt'  # Match with frontend
+SECRET_KEY = 'MySuperSecretKey!'
 
 class RequestData(BaseModel):
     id: str
