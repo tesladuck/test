@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import requests
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 app = FastAPI()
 
@@ -51,7 +53,7 @@ def check_retail_dashboard():
         "Origin": "https://spandan.indianoil.co.in"
     }
     
-    response = requests.get(url, headers=headers, proxies=proxies, timeout=15)
+    response = requests.get(url, headers=headers, proxies=proxies, timeout=15, verify=False)
     
     if "Retail Dashboard" in response.text:
         # Extract cookies in desired format
