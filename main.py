@@ -1,10 +1,12 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from Crypto.Cipher import AES
+import base64
+import hashlib
 
 app = FastAPI()
 
-# Enable CORS so your Chrome extension can call this API
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -15,15 +17,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class AutomationRequest(BaseModel):
+SECRET_KEY = 'MySuperSecretKey!'
+
+class RequestData(BaseModel):
     id: str
     password: str
     action: str
 
-@app.post("/run-task")
-async def run_task(data: AutomationRequest):
-    # You can plug in your selenium logic here
-    print(f"Received automation request: {data}")
+def decrypt(ciphertext):
+    key = hashlib.sha256(SECRET_KEY.encode()).digest()
+    raw_data = base64.b64decode(ciphertext)
+    iv = raw_data[:16]
+    encrypted = raw_data[16:]
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    decrypted = cipher.decrypt(encrypted)
+    return decrypted.rstrip(b"\0").decode('utf-8')
 
-    # Simulate response
-    return {"message": f"Action '{data.action}' started for ID '{data.id}'"}
+@app.post("/run-task")
+async def run_task(data: RequestData):
+    decrypted_id = decrypt(data.id)
+    decrypted_password = decrypt(data.password)
+
+    return {
+        "id": decrypted_id,
+        "password": decrypted_password,
+        "action": data.action
+    }
