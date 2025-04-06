@@ -1,27 +1,66 @@
-document.getElementById('submitBtn').addEventListener('click', async () => {
-  const id = document.getElementById('userId').value.trim();
-  const password = document.getElementById('password').value.trim();
-  const action = document.getElementById('actionType').value;
-  const url = "www.example.com";
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import requests
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-  if (!id || !password || !action) {
-    alert('Please fill all fields');
-    return;
-  }
+app = FastAPI()
 
-  const data = { url, id, password, action };
+# Enable CORS (important for Chrome extension to call the API)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with your extension origin for security
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-  try {
-    const response = await fetch('https://fastapi-backend-usyf.onrender.com/run-task', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
+# Define the expected request format
+class AutomationRequest(BaseModel):
+    url: str
+    id: str
+    password: str
+    action: str
 
-    const result = await response.json();
-    alert(result.message || 'Request sent!');
-  } catch (err) {
-    console.error(err);
-    alert('Error sending request');
-  }
-});
+@app.post("/run-task")
+async def run_task(data: AutomationRequest):
+    # Debug output - Replace with actual automation logic
+    print(f"Received Automation Request:")
+    print(f"URL: {data.url}")
+    print(f"User ID: {data.id}")
+    print(f"Password: {data.password}")
+    print(f"Action: {data.action}")
+
+    # Respond back
+    print(f"Received request to perform '{data.action}' on {data.url} for ID '{data.id}'")
+
+    result = check_retail_dashboard()
+    print(f"Result: '{result}'")
+    return result
+
+# task_handler.py
+def check_retail_dashboard():
+    proxies = {
+        "http": "103.59.143.196:443",
+    #   "https": "103.59.143.196:443",
+    }
+    
+    url = "https://spandan.indianoil.co.in/RetailNew/Login.jsp"
+    
+    headers = {
+        "Host": "spandan.indianoil.co.in",
+        "Origin": "https://spandan.indianoil.co.in"
+    }
+    
+    response = requests.get(url, headers=headers, proxies=proxies, verify=False)
+    print(f"Response: '{response}'")
+    if "Retail Dashboard" in response.text:
+        # Extract cookies in desired format
+        cookies = response.cookies.get_dict()
+        formatted_cookies = "; ".join([f"{k}={v}" for k, v in cookies.items()
+                                       if k in ["TS01b06107", "JSESSIONID", "BIGipServerJboss_52.53_8080", "TS015c0662"]])
+        print("✅ Site Accessed!")
+        print("Cookies:", formatted_cookies)
+    else:
+        print("❌ Retail Dashboard not found.")
