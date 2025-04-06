@@ -53,7 +53,7 @@ def check_retail_dashboard():
     #    "Origin": "https://spandan.indianoil.co.in"
     #}
     
-    response = requests.get(url, headers=headers, timeout=15, verify=False)#,proxies=proxies)
+    response = requests.get(url, timeout=15, verify=False)#, headers=headers, proxies=proxies)
     
     if "Retail Dashboard" in response.text:
         # Extract cookies in desired format
