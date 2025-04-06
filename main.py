@@ -41,14 +41,22 @@ async def run_task(data: AutomationRequest):
 def check_retail_dashboard():
     url = "https://spandan.indianoil.co.in/RetailNew/Login.jsp"
 
+    headers = {
+        "Host": "spandan.indianoil.co.in",
+        "Origin": "https://spandan.indianoil.co.in",
+        "User-Agent": "Mozilla/5.0",  # Pretend it's a browser
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive"
+    }
+
     try:
-        response = requests.get(url)
+        response = requests.get(url, headers=headers)
         content = response.text
 
         if "Retail Dashboard" in content:
             cookies = response.cookies.get_dict()
 
-            # Extract only the required cookies
             keys = ["TS01b06107", "JSESSIONID", "BIGipServerJboss_52.53_8080", "TS015c0662"]
             cookie_str = "; ".join([f"{key}={cookies.get(key, '')}" for key in keys])
 
