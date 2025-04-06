@@ -48,12 +48,12 @@ def check_retail_dashboard():
     
     url = "https://spandan.indianoil.co.in/RetailNew/Login.jsp"
     
-    #headers = {
-    #    "Host": "spandan.indianoil.co.in",
-    #    "Origin": "https://spandan.indianoil.co.in"
-    #}
+    headers = {
+        "Host": "spandan.indianoil.co.in:3600",
+        "Origin": "https://spandan.indianoil.co.in:3600"
+    }
     
-    response = requests.get(url, timeout=15, verify=False)#, headers=headers, proxies=proxies)
+    response = requests.get(url, headers=headers, timeout=15, verify=False)#, proxies=proxies)
     
     if "Retail Dashboard" in response.text:
         # Extract cookies in desired format
