@@ -42,8 +42,8 @@ async def run_task(data: AutomationRequest):
 # task_handler.py
 def check_retail_dashboard():
     proxies = {
-        "http": "http://204.236.137.68:80",
-        "https": "http://204.236.137.68:80",
+        "http": "204.236.137.68:80",
+        "https": "204.236.137.68:80",
     }
     
     url = "https://spandan.indianoil.co.in/RetailNew/Login.jsp"
