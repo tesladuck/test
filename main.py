@@ -41,19 +41,19 @@ async def run_task(data: AutomationRequest):
 
 # task_handler.py
 def check_retail_dashboard():
-    proxies = {
-        "http": "http://204.236.137.68:80",
-        "https": "http://204.236.137.68:80",
-    }
+    #proxies = {
+    #    "http": "http://204.236.137.68:80",
+    #    "https": "http://204.236.137.68:80",
+    #}
     
     url = "https://spandan.indianoil.co.in/RetailNew/Login.jsp"
     
-    headers = {
-        "Host": "spandan.indianoil.co.in",
-        "Origin": "https://spandan.indianoil.co.in"
-    }
+    #headers = {
+    #    "Host": "spandan.indianoil.co.in",
+    #    "Origin": "https://spandan.indianoil.co.in"
+    #}
     
-    response = requests.get(url, headers=headers, proxies=proxies, timeout=15, verify=False)
+    response = requests.get(url, headers=headers, timeout=15, verify=False)#,proxies=proxies)
     
     if "Retail Dashboard" in response.text:
         # Extract cookies in desired format
