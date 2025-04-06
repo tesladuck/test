@@ -1,34 +1,32 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from Crypto.Cipher import AES
-import base64
-import hashlib
 
 app = FastAPI()
 
-SECRET_KEY = 'MySuperSecretKey!'
+# Enable CORS (important for Chrome extension to call the API)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with your extension origin for security
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-class RequestData(BaseModel):
+# Define the expected request format
+class AutomationRequest(BaseModel):
     id: str
     password: str
     action: str
 
-def decrypt(ciphertext):
-    key = hashlib.sha256(SECRET_KEY.encode()).digest()
-    raw_data = base64.b64decode(ciphertext)
-    iv = raw_data[:16]
-    encrypted = raw_data[16:]
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    decrypted = cipher.decrypt(encrypted)
-    return decrypted.rstrip(b"\0").decode('utf-8')
-
 @app.post("/run-task")
-async def run_task(data: RequestData):
-    decrypted_id = decrypt(data.id)
-    decrypted_password = decrypt(data.password)
+async def run_task(data: AutomationRequest):
+    # Debug output - Replace with actual automation logic
+    print(f"Received Automation Request:")
+    print(f"URL: {data.url}")
+    print(f"User ID: {data.id}")
+    print(f"Password: {data.password}")
+    print(f"Action: {data.action}")
 
-    return {
-        "id": decrypted_id,
-        "password": decrypted_password,
-        "action": data.action
-    }
+    # Respond back
+    return {"message": f"Received request to perform '{data.action}' on {data.url} for ID '{data.id}'"}
